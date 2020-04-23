@@ -57,6 +57,69 @@ app.delete('/lists/:id',(req,res)=>{
     })
 })
 
+/**
+ * GET /lists/:listid/tasks
+ */
+app.get('/lists/:listId/tasks',(req,res)=>{
+    Task.find({
+        _listId: req.params.listId
+    }).then((tasks)=>{
+        res.send(tasks);
+
+    })
+});
+/**
+ * POST /list/:listId/tasks
+ */
+
+app.post('/lists/:listId/tasks',(req,res)=>{
+
+    let newTask = new Task({
+        title: req.body.title,
+        _listId: req.params.listId
+    });
+
+    newTask.save().then((newTaskDoc)=>{
+        res.send(newTaskDoc)
+    })
+
+})
+
+/**
+ * PATCH /lists/:listId/tasks/:taskId
+ */
+app.patch('/lists/:listId/tasks/:taskId',(req,res)=>{
+    Task.findOneAndUpdate({
+        _id: req.params.taskId,
+        _listId: req.params.listId
+    },{
+        $set: req.body
+    }
+    ).then(()=>{
+        res.sendStatus(200);
+    });
+})
+
+/**
+ * DELETE /lists/:listId/tasks/:taskId
+ */
+app.delete('/lists/:listId/tasks/:taskId',(req,res)=>{
+    Task.findOneAndRemove({
+        _id: req.params.taskId,
+        _listId: req.params.listId 
+    }).then((taskDoc)=>{
+        res.send(taskDoc);
+    })
+})
+
+app.get('/lists/:listId/tasks/:taskId',(req,res)=>{
+    Task.findOne({
+        _id: req.params.taskId,
+        _listId: req.params.listId
+    }).then((taskData)=>{
+        res.send(taskData)
+    })
+})
 
 app.listen(3001,()=>{
     console.log(`server is listining on port 3001`);
